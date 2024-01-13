@@ -7,9 +7,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rs.ac.uns.ftn.Bookify.enumerations.AccommodationStatusRequest;
+import rs.ac.uns.ftn.Bookify.enumerations.AccommodationType;
+import rs.ac.uns.ftn.Bookify.enumerations.Filter;
+import rs.ac.uns.ftn.Bookify.enumerations.PricePer;
+import rs.ac.uns.ftn.Bookify.model.*;
 import rs.ac.uns.ftn.Bookify.repository.interfaces.IAccommodationRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +69,36 @@ public class AccommodationServiceTest {
     }
 
     @Test
-    public void getAccommodationTest(){
+    public void getAccommodationTest() {
+        Accommodation accommodation = new Accommodation(1L, "Test", "Desc", 2, 4,
+                2, false, AccommodationStatusRequest.APPROVED,
+                true, new ArrayList<PricelistItem>(), new ArrayList<Availability>(), new ArrayList<Review>(),
+                new ArrayList<Filter>(), AccommodationType.HOTEL, PricePer.ROOM, new Address(), new ArrayList<Image>());
+        when(accommodationRepository.getReferenceById(1L)).thenReturn(accommodation);
 
+        Accommodation result = accommodationService.getAccommodation(1L);
+
+        verify(accommodationRepository, times(1)).getReferenceById(1L);
+        assertEquals(accommodation, result);
+        verifyNoMoreInteractions(accommodationRepository);
+    }
+
+    static Stream<Object[]> totalPriceData() {
+        return Stream.of(
+                new Object[]{1L, LocalDate.of(2024, 5, 1), LocalDate.of(2024, 5, 5), PricePer.PERSON, 2, 12.0, 96.0},
+                new Object[]{1L, LocalDate.of(2024, 5, 3), LocalDate.of(2024, 5, 5), PricePer.ROOM, 2, 10.0, 20.0}
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("totalPriceData")
+    public void getTotalPriceTest(Long accommodationId, LocalDate begin, LocalDate end, PricePer pricePer, int persons, double pricePerDay, double expected) {
+        when(accommodationRepository.findPriceForDay(any(LocalDate.class), eq(accommodationId))).thenReturn(Optional.of(pricePerDay));
+
+        double result = accommodationService.getTotalPrice(accommodationId, begin, end, pricePer, persons);
+
+        verify(accommodationRepository, times((int) begin.until(end, java.time.temporal.ChronoUnit.DAYS))).findPriceForDay(any(LocalDate.class), eq(accommodationId));
+        assertEquals(expected, result);
+        verifyNoMoreInteractions(accommodationRepository);
     }
 }
