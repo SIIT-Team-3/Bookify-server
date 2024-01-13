@@ -36,7 +36,7 @@ public class AccommodationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    
+
     @Test
     @WithMockUser(roles = "GUEST")
     public void getTotalPriceTest() throws Exception {
