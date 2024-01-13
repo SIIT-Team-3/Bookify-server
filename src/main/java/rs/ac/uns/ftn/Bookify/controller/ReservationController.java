@@ -43,13 +43,19 @@ public class ReservationController {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private ReservationDTOMapper reservationDTOMapper;
+
+    @Autowired
+    private ReservationRequestDTOMapper reservationRequestDTOMapper;
+
     @GetMapping(value="/guest", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<Collection<ReservationDTO>> findReservationsByUserId(@RequestParam Long userId) {
         //return all reservations of one guest
         Collection<Reservation> reservations = reservationService.getAllForGuest(userId);
         Collection<ReservationDTO> reservationDTOS = reservations.stream()
-                .map(ReservationDTOMapper::toReservationDTO)
+                .map(reservation -> reservationDTOMapper.toReservationDTO(reservation))
                 .collect(Collectors.toList());
         for (ReservationDTO reservation : reservationDTOS){
             reservation.setUser(userService.getOwnerForReservation(reservation.getAccommodationId()));
@@ -68,7 +74,7 @@ public class ReservationController {
         Collection<Reservation> reservations = reservationService.filterForGuest(userId, accommodationId, beginL, endL, statuses);
 
         Collection<ReservationDTO> reservationDTOS = reservations.stream()
-                .map(ReservationDTOMapper::toReservationDTO)
+                .map(reservation -> reservationDTOMapper.toReservationDTO(reservation))
                 .collect(Collectors.toList());
         for (ReservationDTO reservation : reservationDTOS){
             reservation.setUser(userService.getOwnerForReservation(reservation.getAccommodationId()));
@@ -91,7 +97,7 @@ public class ReservationController {
         //return all reservations of one guest
         Collection<Reservation> reservations = reservationService.getAllForOwner(userId);
         Collection<ReservationDTO> reservationDTOS = reservations.stream()
-                .map(ReservationDTOMapper::toReservationDTO)
+                .map(reservation -> reservationDTOMapper.toReservationDTO(reservation))
                 .collect(Collectors.toList());
         for (ReservationDTO reservation : reservationDTOS){
             reservation.setUser(userService.getGuestForReservation(reservation.getId()));
@@ -110,7 +116,7 @@ public class ReservationController {
         Collection<Reservation> reservations = reservationService.filterForOwner(userId, accommodationId, beginL, endL, statuses);
 
         Collection<ReservationDTO> reservationDTOS = reservations.stream()
-                .map(ReservationDTOMapper::toReservationDTO)
+                .map(reservation -> reservationDTOMapper.toReservationDTO(reservation))
                 .collect(Collectors.toList());
         for (ReservationDTO reservation : reservationDTOS){
             reservation.setUser(userService.getGuestForReservation(reservation.getId()));
@@ -141,7 +147,7 @@ public class ReservationController {
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<ReservationDTO> insert(@RequestBody ReservationRequestDTO reservationRequestDTO, @RequestParam Long accommodationId, @RequestParam Long guestId) {
         //insert new reservation request
-        Reservation reservation = ReservationRequestDTOMapper.fromReservationRequestDTOToReservation(reservationRequestDTO);
+        Reservation reservation = reservationRequestDTOMapper.fromReservationRequestDTOToReservation(reservationRequestDTO);
         Reservation ra = reservationService.save(reservation);
 
         Accommodation accommodation = accommodationService.getAccommodation(accommodationId);
@@ -150,7 +156,7 @@ public class ReservationController {
         reservationService.setGuest(guest, ra);
         accommodationService.acceptReservationIfAutomaticConformation(ra);
 
-        ReservationDTO reservationDTO = ReservationDTOMapper.toReservationDTO(ra);
+        ReservationDTO reservationDTO = reservationDTOMapper.toReservationDTO(ra);
         return new ResponseEntity<>(reservationDTO, HttpStatus.CREATED);
     }
 
@@ -168,7 +174,7 @@ public class ReservationController {
         //change status into accepted
         Reservation r = reservationService.accept(reservationId);
         accommodationService.acceptReservationForAccommodation(r);
-        ReservationDTO reservation = ReservationDTOMapper.toReservationDTO(r);
+        ReservationDTO reservation = reservationDTOMapper.toReservationDTO(r);
         reservation.setUser(userService.getGuestForReservation(reservation.getId()));
         reservation.setAvgRating(accommodationService.getAvgRating(reservation.getAccommodationId()));
         return new ResponseEntity<ReservationDTO>(reservation, HttpStatus.OK);
@@ -179,7 +185,7 @@ public class ReservationController {
     public ResponseEntity<ReservationDTO> rejectReservation(@PathVariable Long reservationId) {
         //change status into rejected
         Reservation r = reservationService.reject(reservationId);
-        ReservationDTO reservation = ReservationDTOMapper.toReservationDTO(r);
+        ReservationDTO reservation = reservationDTOMapper.toReservationDTO(r);
         reservation.setUser(userService.getGuestForReservation(reservation.getId()));
         reservation.setAvgRating(accommodationService.getAvgRating(reservation.getAccommodationId()));
         return new ResponseEntity<ReservationDTO>(reservation, HttpStatus.OK);

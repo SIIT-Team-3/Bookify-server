@@ -12,11 +12,11 @@ import java.time.ZoneId;
 @Component
 public class ReservationRequestDTOMapper {
 
-    private static ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public ReservationRequestDTOMapper(ModelMapper modelMapper) {this.modelMapper = modelMapper;}
 
-    public static Reservation fromReservationRequestDTOToReservation(ReservationRequestDTO reservationRequestDTO) {
+    public Reservation fromReservationRequestDTOToReservation(ReservationRequestDTO reservationRequestDTO) {
         Reservation r = modelMapper.map(reservationRequestDTO, Reservation.class);
         r.setStatus(Status.PENDING);
         r.setStart(reservationRequestDTO.getStart().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());

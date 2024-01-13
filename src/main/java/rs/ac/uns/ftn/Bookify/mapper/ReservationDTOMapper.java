@@ -14,11 +14,11 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class ReservationDTOMapper {
 
-    private static ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public ReservationDTOMapper(ModelMapper modelMapper) {this.modelMapper = modelMapper;}
 
-    public static ReservationDTO toReservationDTO(Reservation reservation) {
+    public ReservationDTO toReservationDTO(Reservation reservation) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
         ReservationDTO r = modelMapper.map(reservation, ReservationDTO.class);
         r.setStart(reservation.getStart().format(formatter));
