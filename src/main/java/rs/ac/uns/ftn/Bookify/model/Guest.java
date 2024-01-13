@@ -30,5 +30,4 @@ public class Guest extends User {
     @JsonIgnore
     @ManyToMany
     private List<Accommodation> favorites;
-
 }
