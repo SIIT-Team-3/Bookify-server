@@ -41,6 +41,7 @@ public class ReservationServiceTest {
 
         verify(reservationRepository, times(1)).save(reservationArgumentCaptor.capture());
         assertEquals(reservation, reservationArgumentCaptor.getValue());
+        verifyNoMoreInteractions(reservationRepository);
     }
 
     @Test
@@ -57,6 +58,7 @@ public class ReservationServiceTest {
         assertEquals(accommodation, reservation.getAccommodation());
         verify(reservationRepository, times(1)).save(reservationArgumentCaptor.capture());
         assertEquals(accommodation, reservationArgumentCaptor.getValue().getAccommodation());
+        verifyNoMoreInteractions(reservationRepository);
     }
 
     @Test
@@ -79,5 +81,6 @@ public class ReservationServiceTest {
         assertEquals(guest, reservation.getGuest());
         verify(reservationRepository, times(1)).save(reservationArgumentCaptor.capture());
         assertEquals(guest, reservationArgumentCaptor.getValue().getGuest());
+        verifyNoMoreInteractions(reservationRepository);
     }
 }
