@@ -29,57 +29,68 @@ public class CalendarTest  extends TestBase{
 
 
         CalendarPage calendarPage = new CalendarPage(driver);
-
         assertTrue(calendarPage.isLoaded());
-        calendarPage.changeMonth("March");
-        calendarPage.changeYear(2037);
 
-        String start = calendarPage.selectDate(20);
-        String end = calendarPage.selectDate(2);
+        String start, end;
+        double price = 3.0;
 
-        calendarPage.scrollToBottom();
-        double price = 3;
-        calendarPage.insertPrice(price);
-        calendarPage.addPrice();
+        start = selectDate(calendarPage, 20, "March", 2037);
+        end = selectDate(calendarPage, 2);
+        addPrices(calendarPage, price, start, end);
 
-        List<String> prices = calendarPage.getPrices(start, end);
-        double finalPrice = price;
-        prices.forEach(priceString -> assertEquals(Double.valueOf(priceString), finalPrice));
+        start = selectDate(calendarPage, 1);
+        end = selectDate(calendarPage, 10);
+        deletePrices(calendarPage, start, end);
 
-        calendarPage.scrollToTop();
-        start = calendarPage.selectDate(1);
-        end = calendarPage.selectDate(10);
-
-        calendarPage.scrollToBottom();
-        calendarPage.deletePrice();
-
-        prices = calendarPage.getPrices(start, end);
-        prices.forEach(priceString -> assertEquals(priceString, ""));
-
-        calendarPage.scrollToTop();
-        start = calendarPage.selectDate(15);
-        end = calendarPage.selectDate(17);
-
-        calendarPage.scrollToBottom();
         price = 7;
-        calendarPage.insertPrice(price);
-        calendarPage.addPrice();
+        start = selectDate(calendarPage, 15);
+        end = selectDate(calendarPage, 17);
+        addPrices(calendarPage, price, start, end);
 
-        prices = calendarPage.getPrices(start, end);
-        double finalPrice1 = price;
-        prices.forEach(priceString -> assertEquals(Double.valueOf(priceString), finalPrice1));
-
-        calendarPage.scrollToTop();
-        start = calendarPage.selectDate(2);
-        end = calendarPage.selectDate(20);
-
-        calendarPage.scrollToBottom();
-        calendarPage.deletePrice();
-
-        calendarPage.scrollToTop();
-        prices = calendarPage.getPrices(start, end);
-        prices.forEach(priceString -> assertEquals(priceString, ""));
+        start = selectDate(calendarPage, 2);
+        end = selectDate(calendarPage, 20);
+        deletePrices(calendarPage, start, end);
     }
 
-    
+    private void addPrices(CalendarPage calendarPage, double price, String start, String end) {
+        addPriceListItem(calendarPage, price);
+        testCalendarPricesAdd(calendarPage, start, end, price);
+    }
+
+    private void deletePrices(CalendarPage calendarPage, String start, String end) {
+        calendarPage.scrollToBottom();
+        calendarPage.deletePrice();
+        testCalendarPricesDelete(calendarPage, start, end);
+    }
+
+    private String selectDate(CalendarPage calendarPage, int day) {
+        calendarPage.scrollToTop();
+        return calendarPage.selectDate(day);
+    }
+
+    private String selectDate(CalendarPage calendarPage, int day, String month, int year) {
+        calendarPage.scrollToTop();
+        calendarPage.changeMonth(month);
+        calendarPage.changeYear(year);
+        return calendarPage.selectDate(day);
+    }
+
+    private void addPriceListItem(CalendarPage calendarPage, double price) {
+        calendarPage.scrollToBottom();
+        calendarPage.insertPrice(price);
+        calendarPage.addPrice();
+        calendarPage.scrollToTop();
+    }
+
+    private void testCalendarPricesAdd(CalendarPage calendarPage, String start, String end, double price) {
+        calendarPage.scrollToTop();
+        List<String> prices = calendarPage.getPrices(start, end);
+        prices.forEach(priceString -> assertEquals(Double.valueOf(priceString), price));
+    }
+
+    private void testCalendarPricesDelete(CalendarPage calendarPage, String start, String end) {
+        calendarPage.scrollToTop();
+        List<String> prices = calendarPage.getPrices(start, end);
+        prices.forEach(priceString -> assertEquals(priceString, ""));
+    }
 }

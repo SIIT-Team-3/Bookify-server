@@ -13,7 +13,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CalendarPage {
     private WebDriver driver;
@@ -51,10 +53,25 @@ public class CalendarPage {
     @FindBy(xpath = "//mat-form-field//input")
     WebElement priceInput;
 
+    Map<String, Integer> months;
 
     public CalendarPage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
+        months = Map.ofEntries(
+                Map.entry("January", 1),
+                Map.entry("February", 2),
+                Map.entry("March", 3),
+                Map.entry("April", 4),
+                Map.entry("May", 5),
+                Map.entry("June", 6),
+                Map.entry("July", 7),
+                Map.entry("August", 8),
+                Map.entry("September", 9),
+                Map.entry("October", 10),
+                Map.entry("November", 11),
+                Map.entry("December", 12)
+        );
     }
 
     public boolean isLoaded() {
@@ -64,8 +81,10 @@ public class CalendarPage {
     public void changeMonth(String month) {
         (new WebDriverWait(driver, Duration.ofSeconds(10))).until(ExpectedConditions.visibilityOf(this.month));
         while (true) {
-            if (!month.equals(this.month.getText())) {
+            if (months.get(month) > months.get(this.month.getText())) {
                 increaseMonth();
+            } else if (months.get(month) < months.get(this.month.getText())) {
+                decreaseMonth();
             } else {
                 break;
             }
