@@ -147,7 +147,9 @@ public class ReservationController {
         Guest guest = (Guest) userService.get(guestId);
         reservationService.setGuest(guest, ra);
         accommodationService.acceptReservationIfAutomaticConformation(ra);
-        return new ResponseEntity<>(new ReservationDTO(), HttpStatus.CREATED);
+
+        ReservationDTO reservationDTO = ReservationDTOMapper.toReservationDTO(ra);
+        return new ResponseEntity<>(reservationDTO, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/delete/{reservationId}", produces = MediaType.APPLICATION_JSON_VALUE)
