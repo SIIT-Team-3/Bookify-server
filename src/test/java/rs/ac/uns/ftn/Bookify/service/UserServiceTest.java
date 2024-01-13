@@ -10,7 +10,6 @@ import rs.ac.uns.ftn.Bookify.model.Accommodation;
 import rs.ac.uns.ftn.Bookify.model.Guest;
 import rs.ac.uns.ftn.Bookify.model.User;
 import rs.ac.uns.ftn.Bookify.repository.interfaces.IUserRepository;
-import rs.ac.uns.ftn.Bookify.service.interfaces.IUserService;
 
 import java.util.*;
 
