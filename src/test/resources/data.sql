@@ -12,3 +12,6 @@ VALUES ('2024-03-05', '2024-03-30'), ('2023-03-01', '2023-03-30');
 
 INSERT INTO accommodations_availability (accommodation_id, availability_id)
 VALUES (1, 1), (1, 2);
+
+INSERT INTO users (type, is_active, time, address, city, country, zip_code, blocked, email, first_name, last_name, password, phone, profile_image_id, deleted, hash_token)
+VALUES ('GUEST', true, '2023-11-30 12:30:00', 'Trg Dositeja Obradovica 6', 'Novi Sad', 'Serbia', '21000', false, 'test@example.com', 'pera', 'peric', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '+3816213421', null, false, '');
