@@ -107,6 +107,7 @@ public interface IAccommodationRepository extends JpaRepository<Accommodation, L
             "AND av.endDate >= :begin " +
             "AND av.startDate <= :end " +
             "AND av.endDate >= :end " +
+            "AND av.startDate >= CURRENT_DATE " +
             "AND a.status = 'APPROVED'" +
             "AND a.id = :accommodationId")
     long checkIfAccommodationAvailable(@Param("accommodationId") Long accommodationId,

@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +34,8 @@ public class AccommodationServiceTest {
     static Stream<Object[]> availableData() {
         return Stream.of(
                 new Object[]{1L, LocalDate.of(2024, 3, 20), LocalDate.of(2024, 3, 23), 1L, true},
-                new Object[]{1L, LocalDate.of(2024, 3, 3), LocalDate.of(2024, 3, 7), 0L, false}
+                new Object[]{1L, LocalDate.of(2024, 3, 3), LocalDate.of(2024, 3, 7), 0L, false},
+                new Object[]{1L, LocalDate.of(2023, 3, 3), LocalDate.of(2023, 3, 7), 0L, false}
         );
     }
 
@@ -69,7 +71,7 @@ public class AccommodationServiceTest {
     }
 
     @Test
-    public void getAccommodationTest() {
+    public void getAccommodationSuccessTest() {
         Accommodation accommodation = new Accommodation(1L, "Test", "Desc", 2, 4,
                 2, false, AccommodationStatusRequest.APPROVED,
                 true, new ArrayList<PricelistItem>(), new ArrayList<Availability>(), new ArrayList<Review>(),
@@ -83,10 +85,23 @@ public class AccommodationServiceTest {
         verifyNoMoreInteractions(accommodationRepository);
     }
 
+    @Test
+    public void getAccommodationNotFoundTest() {
+        Long accommodationId = 2L;
+        when(accommodationRepository.getReferenceById(accommodationId)).thenReturn(null);
+
+        Accommodation result = accommodationService.getAccommodation(accommodationId);
+
+        verify(accommodationRepository, times(1)).getReferenceById(accommodationId);
+        assertNull(result);
+        verifyNoMoreInteractions(accommodationRepository);
+    }
+
     static Stream<Object[]> totalPriceData() {
         return Stream.of(
                 new Object[]{1L, LocalDate.of(2024, 5, 1), LocalDate.of(2024, 5, 5), PricePer.PERSON, 2, 12.0, 96.0},
-                new Object[]{1L, LocalDate.of(2024, 5, 3), LocalDate.of(2024, 5, 5), PricePer.ROOM, 2, 10.0, 20.0}
+                new Object[]{1L, LocalDate.of(2024, 5, 3), LocalDate.of(2024, 5, 5), PricePer.ROOM, 2, 10.0, 20.0},
+                new Object[]{1L, LocalDate.of(2024, 5, 3), LocalDate.of(2024, 5, 5), PricePer.ROOM, 4, 20.0, 40.0}
         );
     }
 

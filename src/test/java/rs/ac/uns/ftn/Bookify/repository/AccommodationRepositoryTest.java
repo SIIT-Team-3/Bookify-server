@@ -24,7 +24,8 @@ public class AccommodationRepositoryTest {
      static Stream<Object[]> availableData() {
         return Stream.of(
                 new Object[]{1L, LocalDate.of(2024, 3, 20), LocalDate.of(2024, 3, 23), 1L},
-                new Object[]{1L, LocalDate.of(2024, 3, 3), LocalDate.of(2024, 3, 7), 0L}
+                new Object[]{1L, LocalDate.of(2024, 3, 3), LocalDate.of(2024, 3, 7), 0L},
+                new Object[]{1L, LocalDate.of(2023, 3, 3), LocalDate.of(2023, 3, 7), 0L}
         );
     }
 

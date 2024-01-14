@@ -14,7 +14,8 @@ import rs.ac.uns.ftn.Bookify.repository.interfaces.IUserRepository;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -26,7 +27,7 @@ public class UserServiceTest {
     private IUserRepository userRepository;
 
     @Test
-    public void getTest(){
+    public void getSuccessTest(){
         Guest user = new Guest(new HashMap<NotificationType, Boolean>(), new ArrayList<Accommodation>());
         user.setId(1L);
         user.setEmail("guest@example.com");
@@ -36,11 +37,24 @@ public class UserServiceTest {
         user.setBlocked(false);
         user.setPhone("8452793522");
         user.setDeleted(false);
-
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
         User result = userService.get(1L);
-        assertEquals(user, result);
 
+        assertEquals(user, result);
+        verify(userRepository, times(1)).findById(1L);
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    public void getNotFoundTest(){
+        long userId = 2L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        User result = userService.get(userId);
+
+        assertNull(result);
+        verify(userRepository, times(1)).findById(userId);
+        verifyNoMoreInteractions(userRepository);
     }
 }

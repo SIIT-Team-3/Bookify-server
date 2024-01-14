@@ -89,6 +89,14 @@ public class ReservationControllerTest {
         verify(reservationService).save(any(Reservation.class));
         verify(accommodationService).getAccommodation(accommodationId);
         verify(userService).get(guestId);
+        verify(reservationDTOMapper).toReservationDTO(reservation);
+        verify(reservationRequestDTOMapper).fromReservationRequestDTOToReservation(reservationRequestDTO);
+        verify(reservationService).setAccommodation(accommodation, reservation);
+        verify(reservationService).setGuest(guest, reservation);
+        verifyNoMoreInteractions(reservationService);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(reservationDTOMapper);
+        verifyNoMoreInteractions(reservationRequestDTOMapper);
     }
 
     private static Guest getGuestMock(){

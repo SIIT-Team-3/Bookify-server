@@ -16,8 +16,7 @@ import rs.ac.uns.ftn.Bookify.service.UserService;
 import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,7 +38,52 @@ public class AccommodationControllerTest {
 
     @Test
     @WithMockUser(roles = "GUEST")
-    public void getTotalPriceTest() throws Exception {
+    public void getTotalPriceNotAvailableTest() throws Exception {
+        when(accommodationService.isAvailable(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(false);
+        mockMvc.perform(get("/api/v1/accommodations/price")
+                        .param("id", "1")
+                        .param("begin", "12.10.2024")
+                        .param("end", "15.10.2024")
+                        .param("pricePer", "ROOM")
+                        .param("persons", "2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$", Matchers.is(-1.0)));
+
+        verify(accommodationService).isAvailable(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15));
+        verifyNoInteractions(imageService);
+        verifyNoInteractions(userService);
+        verifyNoMoreInteractions(accommodationService);
+    }
+
+    @Test
+    @WithMockUser(roles = "GUEST")
+    public void getTotalPriceDoesNotFitPersonsTest() throws Exception {
+        when(accommodationService.isAvailable(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(true);
+        when(accommodationService.checkPersons(anyLong(), anyInt())).thenReturn(false);
+
+        mockMvc.perform(get("/api/v1/accommodations/price")
+                        .param("id", "1")
+                        .param("begin", "12.10.2024")
+                        .param("end", "15.10.2024")
+                        .param("pricePer", "ROOM")
+                        .param("persons", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$", Matchers.is(-1.0)));
+
+        verify(accommodationService).isAvailable(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15));
+        verify(accommodationService).checkPersons(1L, 10);
+        verifyNoInteractions(imageService);
+        verifyNoInteractions(userService);
+        verifyNoMoreInteractions(accommodationService);
+    }
+
+    @Test
+    @WithMockUser(roles = "GUEST")
+    public void getTotalPriceByRoomSuccessTest() throws Exception {
         when(accommodationService.isAvailable(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(true);
         when(accommodationService.checkPersons(anyLong(), anyInt())).thenReturn(true);
         when(accommodationService.getTotalPrice(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15), PricePer.ROOM, 2)).thenReturn(50.0);
@@ -58,5 +102,34 @@ public class AccommodationControllerTest {
         verify(accommodationService).isAvailable(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15));
         verify(accommodationService).checkPersons(1L, 2);
         verify(accommodationService).getTotalPrice(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15), PricePer.ROOM, 2);
+        verifyNoInteractions(imageService);
+        verifyNoInteractions(userService);
+        verifyNoMoreInteractions(accommodationService);
+    }
+
+    @Test
+    @WithMockUser(roles = "GUEST")
+    public void getTotalPriceByPersonSuccessTest() throws Exception {
+        when(accommodationService.isAvailable(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(true);
+        when(accommodationService.checkPersons(anyLong(), anyInt())).thenReturn(true);
+        when(accommodationService.getTotalPrice(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15), PricePer.PERSON, 2)).thenReturn(100.0);
+
+        mockMvc.perform(get("/api/v1/accommodations/price")
+                        .param("id", "1")
+                        .param("begin", "12.10.2024")
+                        .param("end", "15.10.2024")
+                        .param("pricePer", "PERSON")
+                        .param("persons", "2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$", Matchers.is(100.0)));
+
+        verify(accommodationService).isAvailable(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15));
+        verify(accommodationService).checkPersons(1L, 2);
+        verify(accommodationService).getTotalPrice(1L, LocalDate.of(2024, 10, 12), LocalDate.of(2024, 10, 15), PricePer.PERSON, 2);
+        verifyNoInteractions(imageService);
+        verifyNoInteractions(userService);
+        verifyNoMoreInteractions(accommodationService);
     }
 }
