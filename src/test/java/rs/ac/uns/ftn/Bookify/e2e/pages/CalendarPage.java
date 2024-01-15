@@ -53,6 +53,9 @@ public class CalendarPage {
     @FindBy(xpath = "//mat-form-field//input")
     WebElement priceInput;
 
+    @FindBy(tagName = "body")
+    WebElement body;
+
     Map<String, Integer> months;
 
     public CalendarPage(WebDriver driver) {
@@ -175,6 +178,11 @@ public class CalendarPage {
     private String getPrice(int day) {
         String locator = String.format(".//span[text() = '%s']/../span[2]", day);
         return calendarDays.findElement(By.xpath(locator)).getText().replace("€", "");
+    }
+
+    public boolean getPopup() {
+        WebElement popup = body.findElement(By.className("cdk-overlay-container"));
+        return popup.isDisplayed();
     }
 
     public void scrollToBottom() {

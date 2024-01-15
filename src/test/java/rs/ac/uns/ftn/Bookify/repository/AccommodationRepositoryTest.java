@@ -1,6 +1,8 @@
 package rs.ac.uns.ftn.Bookify.repository;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
@@ -16,7 +18,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@DataJpaTest
 @ActiveProfiles("test")
 public class AccommodationRepositoryTest extends AbstractTestNGSpringContextTests {
 
@@ -24,50 +26,48 @@ public class AccommodationRepositoryTest extends AbstractTestNGSpringContextTest
     private IAccommodationRepository accommodationRepository;
 
 
-    @Test(dataProvider = "priceListDates", invocationCount = 10)
-    public void getPriceListItems(Long accommodationId, List<PricelistItem> expectedPriceListItems) {
+    @Test(dataProvider = "priceListData")
+    public void getPriceListItems(Long accommodationId, List<PricelistItem> expectedPriceListItems, int expected) {
         List<PricelistItem> items = (List<PricelistItem>) accommodationRepository.getPriceListItems(accommodationId);
 
-        assertEquals(2, items.size());
+        assertEquals(expected, items.size());
         for (int i = 0; i < items.size(); i++) {
             assertEquals(items.get(i).getStartDate(), expectedPriceListItems.get(i).getStartDate());
             assertEquals(items.get(i).getEndDate(), expectedPriceListItems.get(i).getEndDate());
+            assertEquals(items.get(i).getPrice(), expectedPriceListItems.get(i).getPrice());
         }
-//        for (PricelistItem item : items1) {
-//            assertFalse(item.getStartDate().isAfter(end));
-//            assertFalse(item.getEndDate().isBefore(start));
-//        }
     }
 
-    @DataProvider(name = "priceListDates")
-    public Object[][] priceListDates() {
+    @DataProvider(name = "priceListData")
+    public Object[][] priceListData() {
         return new Object[][]{
                 {1L, new ArrayList<PricelistItem>(List.of(
                         new PricelistItem(1L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 20), 10.99),
-                        new PricelistItem(2L, LocalDate.of(2024, 3, 25), LocalDate.of(2024, 3, 30), 28.99)
-                ))},
+                        new PricelistItem(2L, LocalDate.of(2024, 3, 25), LocalDate.of(2024, 3, 30), 28.99),
+                        new PricelistItem(73L, LocalDate.of(2023, 12, 4), LocalDate.of(2023, 12, 10), 20)
+                )), 3},
                 {2L, new ArrayList<PricelistItem>(List.of(
                         new PricelistItem(3L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 10), 39.99),
                         new PricelistItem(4L, LocalDate.of(2024, 3, 12), LocalDate.of(2024, 3, 20), 31.99)
-                ))}
+                )), 2}
         };
     }
 
     @Test
     public void getPriceListItemsWrongId() {
         List<PricelistItem> items = (List<PricelistItem>) accommodationRepository.getPriceListItems(100L);
-
-//        for (PricelistItem item : items1) {
-//            assertFalse(item.getStartDate().isAfter(end));
-//            assertFalse(item.getEndDate().isBefore(start));
-//        }
         assertEquals(0, items.size());
     }
 
     @Test(dataProvider = "priceListOverlapsWithData")
     public void getPriceListItemsOverlapsWith(Long accommodationId, LocalDate startDate, LocalDate endDate, int expected) {
         List<PricelistItem> items = (List<PricelistItem>) accommodationRepository.getPriceListItemsOverlapsWith(accommodationId, startDate, endDate);
+
         assertEquals(expected, items.size());
+        for (PricelistItem item : items) {
+            assertFalse(item.getStartDate().isAfter(endDate));
+            assertFalse(item.getEndDate().isBefore(startDate));
+        }
     }
 
     @DataProvider(name = "priceListOverlapsWithData")
@@ -84,19 +84,49 @@ public class AccommodationRepositoryTest extends AbstractTestNGSpringContextTest
         };
     }
 
-    @Test
-    public void getAvailabilities() {
-        List<Availability> items1 = (List<Availability>) accommodationRepository.getAvailabilities(1L);
-        List<Availability> items2 = (List<Availability>) accommodationRepository.getAvailabilities(100L);
+    @Test(dataProvider = "availabilityData")
+    public void getAvailabilities(Long accommodationId, List<Availability> expectedPriceListItems, int expected) {
+        List<Availability> items = (List<Availability>) accommodationRepository.getAvailabilities(accommodationId);
 
-        assertEquals(2, items1.size());
-        assertEquals(0, items2.size());
+        assertEquals(expected, items.size());
+        for (int i = 0; i < items.size(); i++) {
+            assertEquals(items.get(i).getStartDate(), expectedPriceListItems.get(i).getStartDate());
+            assertEquals(items.get(i).getEndDate(), expectedPriceListItems.get(i).getEndDate());
+        }
+    }
+
+    @DataProvider(name = "availabilityData")
+    public Object[][] availabilityData() {
+        return new Object[][]{
+                {1L, new ArrayList<Availability>(List.of(
+                        new Availability(1L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 20)),
+                        new Availability(2L, LocalDate.of(2024, 3, 25), LocalDate.of(2024, 3, 30)),
+                        new Availability(73L, LocalDate.of(2023, 12, 4), LocalDate.of(2023, 12, 10))
+                )), 3},
+                {2L, new ArrayList<Availability>(List.of(
+                        new Availability(3L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 10)),
+                        new Availability(4L, LocalDate.of(2024, 3, 12), LocalDate.of(2024, 3, 20))
+                )), 2}
+        };
+    }
+
+    @Test
+    public void getAvailabilitiesWrong() {
+        List<Availability> items = (List<Availability>) accommodationRepository.getAvailabilities(100L);
+
+        assertEquals(0, items.size());
     }
 
     @Test(dataProvider = "availabilityOverlapsWithData")
     public void getAvailabilityItemsOverlapsWith(Long accommodationId, LocalDate startDate, LocalDate endDate, int expected) {
         List<Availability> items = (List<Availability>) accommodationRepository.getAvailabilityItemsOverlapsWith(accommodationId, startDate, endDate);
+
         assertEquals(expected, items.size());
+        assertEquals(expected, items.size());
+        for (Availability item : items) {
+            assertFalse(item.getStartDate().isAfter(endDate));
+            assertFalse(item.getEndDate().isBefore(startDate));
+        }
     }
 
     @DataProvider(name = "availabilityOverlapsWithData")

@@ -33,7 +33,6 @@ import static org.testng.Assert.*;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
 public class AccommodationServiceTest extends AbstractTestNGSpringContextTests {
 
     @Autowired

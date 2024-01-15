@@ -1,3 +1,7 @@
+
+INSERT INTO users (type, is_active, time, address, city, country, zip_code, blocked, email, first_name, last_name, password, phone, profile_image_id, deleted, hash_token)
+VALUES ('GUEST', true, '2023-11-30 12:30:00', 'Trg Dositeja Obradovica 6', 'Novi Sad', 'Serbia', '21000', false, 'test@example.com', 'pera', 'peric', '$2a$04$Vbug2lwwJGrvUXTj6z7ff.97IzVBkrJ1XfApfGNl.Z695zqcnPYra', '+3816213421', null, false, '');
+
 INSERT INTO accommodations (name, description, min_guest, max_guest, cancellation_deadline, status, manual, accommodation_type, price_per, address, city, country, zip_code, deleted)
 VALUES
     ('Downtown Loft', 'Experience urban living at its finest in our stylish Downtown Loft. This modern loft offers contemporary design and is centrally located for easy access to city attractions and nightlife.', 2, 4, 2, 'APPROVED', true, 'HOTEL', 'PERSON', 'Øster Voldgade 4', 'Copenhagen', 'Denmark', '1350', false),
@@ -39,7 +43,7 @@ VALUES
 
 
 INSERT INTO pricelist_items (start_date, end_date, price)
-VALUES 
+VALUES
     ('2024-03-01', '2024-03-20', 10.99), ('2024-03-25', '2024-03-30', 28.99), ('2024-03-01', '2024-03-10', 39.99), ('2024-03-12', '2024-03-20', 31.99),
     ('2024-03-05', '2024-03-07', 19.99), ('2024-03-10', '2024-03-13', 26.99), ('2024-03-05', '2024-03-12', 31.99), ('2024-03-17', '2024-03-20', 12.99),
     ('2024-03-01', '2024-03-03', 19.99), ('2024-03-06', '2024-03-10', 28.99), ('2024-03-02', '2024-03-05', 37.99), ('2024-03-12', '2024-03-22', 32.99),
@@ -73,7 +77,7 @@ VALUES
 
 
 INSERT INTO availability (start_date, end_date)
-VALUES 
+VALUES
     ('2024-03-01', '2024-03-20'), ('2024-03-25', '2024-03-30'), ('2024-03-01', '2024-03-10'), ('2024-03-12', '2024-03-20'),
     ('2024-03-05', '2024-03-07'), ('2024-03-10', '2024-03-13'), ('2024-03-05', '2024-03-12'), ('2024-03-17', '2024-03-20'),
     ('2024-03-01', '2024-03-03'), ('2024-03-06', '2024-03-10'), ('2024-03-02', '2024-03-05'), ('2024-03-12', '2024-03-22'),
@@ -104,3 +108,24 @@ VALUES
     (25, 49), (25, 50), (26, 51), (26, 52), (27, 53), (27, 54), (28, 55), (28, 56),
     (29, 57), (29, 58), (30, 59), (30, 60), (31, 61), (31, 62), (32, 63), (32, 64),
     (33, 65), (33, 66), (34, 67), (34, 68), (35, 69), (35, 70), (36, 71), (36, 72);
+
+INSERT INTO reservations (created, start, guest_number, end, status, accommodation_id, guest_id, price)
+VALUES
+    ('2024-10-01', '2027-12-05', 2, '2027-12-10', 'ACCEPTED', 1, 1, 100),
+    ('2034-10-01', '2037-12-05', 2, '2037-12-10', 'ACCEPTED', 1, 1, 100);
+
+INSERT INTO pricelist_items (start_date, end_date, price)
+VALUES
+    ('2027-12-04', '2027-12-10', 20);
+
+INSERT INTO accommodations_price_list (accommodation_id, price_list_id)
+VALUES
+    (1, 73);
+
+INSERT INTO availability (start_date, end_date)
+VALUES
+    ('2027-12-04', '2027-12-10');
+
+INSERT INTO accommodations_availability (accommodation_id, availability_id)
+VALUES
+    (1, 73);

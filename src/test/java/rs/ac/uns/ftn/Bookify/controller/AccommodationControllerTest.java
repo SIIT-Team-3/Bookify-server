@@ -94,6 +94,29 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
     }
 
     @Test(priority = 3)
+    public void addPriceListItemBadRequest(){
+        PriceListItemDTO dto = new PriceListItemDTO(java.sql.Date.valueOf(LocalDate.of(2027, 12,12)),
+                java.sql.Date.valueOf(LocalDate.of(2027, 12, 13)), 100);
+
+        JWTUtils jwtUtils = new JWTUtils();
+        String jwtToken = jwtUtils.generateToken("owner@example.com", 100L,"ROLE_OWNER", "web");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
+
+        ResponseEntity<Long> responseEntity = restTemplate.exchange("/api/v1/accommodations/1/addPrice",
+                HttpMethod.POST,
+                requestEntity,
+                Long.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Accommodation has reservations", responseEntity.getBody());
+    }
+
+    @Test(priority = 4)
     public void deletePriceListItem(){
         PriceListItemDTO dto = new PriceListItemDTO(Date.from(LocalDate.of(2024, 3,2).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.of(2024, 3, 13).atStartOfDay(ZoneId.systemDefault()).toInstant()), 10.99);
@@ -110,5 +133,24 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(dto, responseEntity.getBody());
+    }
+
+    @Test(priority = 5)
+    public void deletePriceListItemBadRequest(){
+        PriceListItemDTO dto = new PriceListItemDTO(Date.from(LocalDate.of(2027, 12,12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.of(2027, 12, 12).atStartOfDay(ZoneId.systemDefault()).toInstant()), 13);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
+
+        ResponseEntity<PriceListItemDTO> responseEntity = restTemplate.exchange("/api/v1/accommodations/price/1",
+                HttpMethod.DELETE,
+                requestEntity,
+                PriceListItemDTO.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Accommodation has reservations", responseEntity.getBody());
     }
 }
