@@ -29,8 +29,6 @@ public class ReservationControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    @Transactional
-    @Rollback
     public void insertTest() throws JsonProcessingException {
         Long accommodationId = 1L;
         Long guestId = 1L;
