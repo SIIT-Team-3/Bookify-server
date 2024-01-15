@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="MySuite">
+    <listeners>
+        <listener class-name="org.springframework.test.context.testng.AbstractTestNGSpringContextTests"/>
+    </listeners>
+    <test name="MyTest">
+        <classes>
+            <class name="rs.ac.uns.ftn.Bookify.repository.AccommodationRepositoryTest"/>
+            <class name="rs.ac.uns.ftn.Bookify.service.AccommodationServiceTest"/>
+            <class name="rs.ac.uns.ftn.Bookify.controller.AccommodationControllerTest"/>
+        </classes>
+    </test>
+</suite>

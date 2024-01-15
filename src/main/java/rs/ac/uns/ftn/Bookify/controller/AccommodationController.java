@@ -308,9 +308,9 @@ public class AccommodationController {
 
     @GetMapping(value = "/{accommodationId}/getPrice", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
-    public ResponseEntity<Collection<PriceListItemDTO>> getAccommodationPriceListItems(@PathVariable Long accommodationId) {
+    public ResponseEntity<List<PriceListItemDTO>> getAccommodationPriceListItems(@PathVariable Long accommodationId) {
         Collection<PricelistItem> priceListItems = accommodationService.getAccommodationPriceListItems(accommodationId);
-        Collection<PriceListItemDTO> priceListItemDTOS = PriceListItemDTOMapper.fromPriceListItemtoDTO(priceListItems);
+        List<PriceListItemDTO> priceListItemDTOS = (List<PriceListItemDTO>) PriceListItemDTOMapper.fromPriceListItemtoDTO(priceListItems);
         return new ResponseEntity<>(priceListItemDTOS, HttpStatus.OK);
     }
 

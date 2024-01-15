@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.Bookify.e2e.tests;
 
+import org.springframework.test.context.ActiveProfiles;
 import org.testng.annotations.Test;
 import rs.ac.uns.ftn.Bookify.e2e.pages.*;
 
@@ -7,7 +8,7 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-
+@ActiveProfiles("test")
 public class CalendarTest  extends TestBase{
 
     @Test

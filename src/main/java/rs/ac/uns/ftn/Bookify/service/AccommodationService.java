@@ -245,8 +245,8 @@ public class AccommodationService implements IAccommodationService {
 
         Accommodation accommodation = trimOverlapingIntervals(accommodationId, start, end);
 
-        accommodation.getPriceList().add(newPricelistItem);
-        priceListItemRepository.save(newPricelistItem);
+        PricelistItem returnPriceListItem  = priceListItemRepository.save(newPricelistItem);
+        accommodation.getPriceList().add(returnPriceListItem);
         accommodationRepository.save(accommodation);
         mergePricelistIntervals(accommodationId);
         return accommodationRepository.getPriceListItems(accommodationId);
@@ -278,8 +278,8 @@ public class AccommodationService implements IAccommodationService {
                 splittedPricelistItem.setEndDate(pliEnd);
                 splittedPricelistItem.setPrice(pli.getPrice());
                 pli.setEndDate(start.minusDays(1));
-                accommodation.getPriceList().add(splittedPricelistItem);
-                priceListItemRepository.save(splittedPricelistItem);
+                PricelistItem newPriceList = priceListItemRepository.save(splittedPricelistItem);
+                accommodation.getPriceList().add(newPriceList);
                 priceListItemRepository.save(pli);
                 accommodationRepository.save(accommodation);
             }
@@ -386,8 +386,8 @@ public class AccommodationService implements IAccommodationService {
                 splittedAvailabilityItem.setStartDate(end.plusDays(1));
                 splittedAvailabilityItem.setEndDate(pliEnd);
                 a.setEndDate(start.minusDays(1));
-                accommodation.getAvailability().add(splittedAvailabilityItem);
-                availabilityRepository.save(splittedAvailabilityItem);
+                Availability newAvailability = availabilityRepository.save(splittedAvailabilityItem);
+                accommodation.getAvailability().add(newAvailability);
                 availabilityRepository.save(a);
                 accommodationRepository.save(accommodation);
             }
