@@ -144,7 +144,7 @@ public class ReservationController {
     }
 
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+//    @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<ReservationDTO> insert(@RequestBody ReservationRequestDTO reservationRequestDTO, @RequestParam Long accommodationId, @RequestParam Long guestId) {
         //insert new reservation request
         Reservation reservation = reservationRequestDTOMapper.fromReservationRequestDTOToReservation(reservationRequestDTO);

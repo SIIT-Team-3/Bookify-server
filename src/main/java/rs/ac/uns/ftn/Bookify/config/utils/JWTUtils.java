@@ -20,7 +20,7 @@ public class JWTUtils {
     private String APP_NAME;
 
     @Value("tvojamama")
-    private String SECRET;
+    private String SECRET = "tvojamama";
 
     @Value("1800000")
     private int EXPIRES_IN_WEB;

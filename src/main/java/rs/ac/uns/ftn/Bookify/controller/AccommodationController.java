@@ -82,7 +82,7 @@ public class AccommodationController {
     }
 
     @GetMapping(value = "/price", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ROLE_GUEST')")
+//    @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<Double> getTotalPrice(@RequestParam("id") Long id, @RequestParam("begin") @DateTimeFormat(pattern = "dd.MM.yyyy") Date begin, @RequestParam("end") @DateTimeFormat(pattern = "dd.MM.yyyy") Date end, @RequestParam("pricePer") PricePer pricePer, @RequestParam("persons") int persons) {
         LocalDate beginL = begin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endL = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
