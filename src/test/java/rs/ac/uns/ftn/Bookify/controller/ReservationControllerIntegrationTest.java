@@ -3,7 +3,11 @@ package rs.ac.uns.ftn.Bookify.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.Bookify.config.utils.JWTUtils;
 import rs.ac.uns.ftn.Bookify.dto.ReservationRequestDTO;
+import rs.ac.uns.ftn.Bookify.dto.UserCredentialsDTO;
 
 import java.util.Date;
 
@@ -23,10 +28,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ReservationControllerIntegrationTest {
+    String token;
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @BeforeAll
+    public void login() throws JSONException {
+        ResponseEntity<String> responseEntity1 = restTemplate.postForEntity("/api/v1/users/login",
+                new UserCredentialsDTO("test@example.com", "123"), String.class);
+        JSONObject json = new JSONObject(responseEntity1.getBody());
+        token = json.getString("accessToken");
+    }
 
     @Test
     public void insertTest() throws JsonProcessingException {
@@ -34,10 +49,8 @@ public class ReservationControllerIntegrationTest {
         Long guestId = 1L;
         ReservationRequestDTO reservationRequestDTO = new ReservationRequestDTO(new Date(124, 2, 2), new Date(124, 2, 12), new Date(124, 2, 20), 3, 120.0);
 
-//        JWTUtils jwtUtils = new JWTUtils();
-//        String token = jwtUtils.generateToken("test@example.com", 1L, "GUEST", "web");
         HttpHeaders headers = new HttpHeaders();
-//        headers.set("Authorization", "Bearer " + token);
+        headers.set("Authorization", "Bearer " + token);
 
         HttpEntity<ReservationRequestDTO> requestEntity = new HttpEntity<>(reservationRequestDTO, headers);
 
