@@ -115,6 +115,65 @@ public class CalendarTest  extends TestBase{
         assertTrue(calendarPage.getPopup());
     }
 
+    @Test
+    public void testBookingNotSelected() {
+        LoginPage loginPage = new LoginPage(driver);
+        assertTrue(loginPage.isLoaded());
+        loginPage.inputCredentials("owner@example.com", "123");
+        loginPage.logIn();
+
+
+        OwnerLandingPage ownerLandingPage = new OwnerLandingPage(driver);
+        assertTrue(ownerLandingPage.isLoaded());
+        ownerLandingPage.openMyAccommodations();
+
+
+        OwnersAccommodationsPage ownersAccommodationsPage = new OwnersAccommodationsPage(driver);
+        assertTrue(ownersAccommodationsPage.isLoaded());
+        ownersAccommodationsPage.openAccommodationsCalendar(0);
+
+
+        CalendarPage calendarPage = new CalendarPage(driver);
+        assertTrue(calendarPage.isLoaded());
+
+        calendarPage.scrollToBottom();
+        calendarPage.addPrice();
+        assertTrue(calendarPage.getPopup());
+
+        calendarPage.deletePrice();
+        assertTrue(calendarPage.getPopup());
+    }
+
+    @Test
+    public void testBookingNegativePrice() {
+        LoginPage loginPage = new LoginPage(driver);
+        assertTrue(loginPage.isLoaded());
+        loginPage.inputCredentials("owner@example.com", "123");
+        loginPage.logIn();
+
+
+        OwnerLandingPage ownerLandingPage = new OwnerLandingPage(driver);
+        assertTrue(ownerLandingPage.isLoaded());
+        ownerLandingPage.openMyAccommodations();
+
+
+        OwnersAccommodationsPage ownersAccommodationsPage = new OwnersAccommodationsPage(driver);
+        assertTrue(ownersAccommodationsPage.isLoaded());
+        ownersAccommodationsPage.openAccommodationsCalendar(0);
+
+
+        CalendarPage calendarPage = new CalendarPage(driver);
+        assertTrue(calendarPage.isLoaded());
+
+        String start, end;
+        double price = -3.0;
+
+        start = selectDate(calendarPage, 20, "March", 2037);
+        end = selectDate(calendarPage, 2);
+        addPriceListItem(calendarPage, price);
+        assertTrue(calendarPage.getPopup());
+    }
+
 
     private void addPrices(CalendarPage calendarPage, double price, String start, String end) {
         addPriceListItem(calendarPage, price);
