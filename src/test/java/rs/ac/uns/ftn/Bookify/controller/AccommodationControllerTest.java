@@ -1,5 +1,11 @@
 package rs.ac.uns.ftn.Bookify.controller;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -11,54 +17,41 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.web.client.RequestCallback;
-import org.testng.annotations.Test;
 import rs.ac.uns.ftn.Bookify.config.utils.JWTUtils;
 import rs.ac.uns.ftn.Bookify.dto.PriceListItemDTO;
+import rs.ac.uns.ftn.Bookify.dto.UserCredentialsDTO;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccommodationControllerTest extends AbstractTestNGSpringContextTests {
+    String token;
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Test(priority = 1)
+    @BeforeAll
+    public void login() throws JSONException {
+        ResponseEntity<String> responseEntity1 = restTemplate.postForEntity("/api/v1/users/login",
+                new UserCredentialsDTO("owner@example.com", "123"), String.class);
+        JSONObject json = new JSONObject(responseEntity1.getBody());
+        token = json.getString("accessToken");
+    }
+
+    @Test
+    @Order(1)
     public void getAccommodationPriceListItems(){
-        JWTUtils jwtUtils = new JWTUtils();
-        String jwtToken = jwtUtils.generateToken("owner@example.com", 100L,"OWNER", "web");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // Create a RequestCallback to set the headers in the request
-//        RequestCallback requestCallback = restTemplate.httpEntityCallback(new HttpEntity<>(headers));
-//
-//        // Define the endpoint URL
-//        String url = "your_api_url";
-//
-//        // Make the authorized request
-//        ResponseEntity<Collection<MyObject>> responseEntity = restTemplate.exchange(
-//                url,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<Collection<MyOb
-
-//        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-//
-//        converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
-//        messageConverters.add(converter);
-//        restTemplate.
-//        restTemplate.setMessageConverters(messageConverters);
-
+        headers.set("Authorization", "Bearer " + token);
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
         ResponseEntity<List<PriceListItemDTO>> responseEntity = restTemplate.exchange("/api/v1/accommodations/1/getPrice",
                 HttpMethod.GET,
                 requestEntity,
@@ -67,19 +60,18 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
 
         List<PriceListItemDTO> items = responseEntity.getBody();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(2, items.size());
+        assertNotNull(items);
+        assertEquals(3, items.size());
     }
 
-    @Test(priority = 2)
+    @Test
+    @Order(2)
     public void addPriceListItem(){
         PriceListItemDTO dto = new PriceListItemDTO(java.sql.Date.valueOf(LocalDate.of(2024, 12,12)),
                 java.sql.Date.valueOf(LocalDate.of(2024, 12, 13)), 100);
 
-        JWTUtils jwtUtils = new JWTUtils();
-        String jwtToken = jwtUtils.generateToken("owner@example.com", 100L,"ROLE_OWNER", "web");
-
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.set("Authorization", "Bearer " + token);
         headers.set("Content-Type", "application/json");
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
@@ -93,16 +85,15 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
         assertEquals(1, responseEntity.getBody());
     }
 
-    @Test(priority = 3)
+    @Test
+    @Order(3)
     public void addPriceListItemBadRequest(){
-        PriceListItemDTO dto = new PriceListItemDTO(java.sql.Date.valueOf(LocalDate.of(2027, 12,12)),
+        PriceListItemDTO dto = new PriceListItemDTO(java.sql.Date.valueOf(LocalDate.of(2027, 12,4)),
                 java.sql.Date.valueOf(LocalDate.of(2027, 12, 13)), 100);
 
-        JWTUtils jwtUtils = new JWTUtils();
-        String jwtToken = jwtUtils.generateToken("owner@example.com", 100L,"ROLE_OWNER", "web");
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.set("Authorization", "Bearer " + token);
         headers.set("Content-Type", "application/json");
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
@@ -113,15 +104,17 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
                 Long.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Accommodation has reservations", responseEntity.getBody());
+        assertEquals(-1L, responseEntity.getBody());
     }
 
-    @Test(priority = 4)
+    @Test
+    @Order(4)
     public void deletePriceListItem(){
         PriceListItemDTO dto = new PriceListItemDTO(Date.from(LocalDate.of(2024, 3,2).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.of(2024, 3, 13).atStartOfDay(ZoneId.systemDefault()).toInstant()), 10.99);
 
         HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
         headers.set("Content-Type", "application/json");
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
@@ -135,12 +128,14 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
         assertEquals(dto, responseEntity.getBody());
     }
 
-    @Test(priority = 5)
+    @Test
+    @Order(5)
     public void deletePriceListItemBadRequest(){
-        PriceListItemDTO dto = new PriceListItemDTO(Date.from(LocalDate.of(2027, 12,12).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+        PriceListItemDTO dto = new PriceListItemDTO(Date.from(LocalDate.of(2027, 12,1).atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 Date.from(LocalDate.of(2027, 12, 12).atStartOfDay(ZoneId.systemDefault()).toInstant()), 13);
 
         HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
         headers.set("Content-Type", "application/json");
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
@@ -151,6 +146,6 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
                 PriceListItemDTO.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Accommodation has reservations", responseEntity.getBody());
+        assertNull(responseEntity.getBody());
     }
 }

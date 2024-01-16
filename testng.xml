@@ -6,7 +6,9 @@
     <test name="MyTest">
         <classes>
             <class name="rs.ac.uns.ftn.Bookify.repository.AccommodationRepositoryTest"/>
+            <class name="rs.ac.uns.ftn.Bookify.repository.ReservationRepositoryTest"/>
             <class name="rs.ac.uns.ftn.Bookify.service.AccommodationServiceTest"/>
+            <class name="rs.ac.uns.ftn.Bookify.service.ReservationServiceTest"/>
             <class name="rs.ac.uns.ftn.Bookify.controller.AccommodationControllerTest"/>
         </classes>
     </test>

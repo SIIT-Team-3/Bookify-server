@@ -44,7 +44,7 @@ public class AccommodationRepositoryTest extends AbstractTestNGSpringContextTest
                 {1L, new ArrayList<PricelistItem>(List.of(
                         new PricelistItem(1L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 20), 10.99),
                         new PricelistItem(2L, LocalDate.of(2024, 3, 25), LocalDate.of(2024, 3, 30), 28.99),
-                        new PricelistItem(73L, LocalDate.of(2023, 12, 4), LocalDate.of(2023, 12, 10), 20)
+                        new PricelistItem(73L, LocalDate.of(2027, 12, 4), LocalDate.of(2027, 12, 10), 20)
                 )), 3},
                 {2L, new ArrayList<PricelistItem>(List.of(
                         new PricelistItem(3L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 10), 39.99),
@@ -101,7 +101,7 @@ public class AccommodationRepositoryTest extends AbstractTestNGSpringContextTest
                 {1L, new ArrayList<Availability>(List.of(
                         new Availability(1L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 20)),
                         new Availability(2L, LocalDate.of(2024, 3, 25), LocalDate.of(2024, 3, 30)),
-                        new Availability(73L, LocalDate.of(2023, 12, 4), LocalDate.of(2023, 12, 10))
+                        new Availability(73L, LocalDate.of(2027, 12, 4), LocalDate.of(2027, 12, 10))
                 )), 3},
                 {2L, new ArrayList<Availability>(List.of(
                         new Availability(3L, LocalDate.of(2024, 3, 1), LocalDate.of(2024, 3, 10)),

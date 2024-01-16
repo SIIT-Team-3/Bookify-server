@@ -1,4 +1,6 @@
 package rs.ac.uns.ftn.Bookify.controller;
+
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rs.ac.uns.ftn.Bookify.dto.*;
 import rs.ac.uns.ftn.Bookify.enumerations.AccommodationStatusRequest;
 import rs.ac.uns.ftn.Bookify.enumerations.AccommodationType;
+import rs.ac.uns.ftn.Bookify.exception.BadRequestException;
 import rs.ac.uns.ftn.Bookify.mapper.*;
 import rs.ac.uns.ftn.Bookify.model.*;
 import rs.ac.uns.ftn.Bookify.enumerations.PricePer;
@@ -43,7 +46,7 @@ public class AccommodationController {
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResponseDTO> getAccommodationBasics(@RequestParam("location") String location, @RequestParam("begin")
     @DateTimeFormat(pattern = "dd.MM.yyyy") Date begin, @RequestParam("end") @DateTimeFormat(pattern = "dd.MM.yyyy") Date end, @RequestParam("persons")
-    int persons, @RequestParam("page") int page, @RequestParam("size") int size) {
+                                                                    int persons, @RequestParam("page") int page, @RequestParam("size") int size) {
         //return all basic info of accommodations for search
         LocalDate beginL = begin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endL = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -60,15 +63,15 @@ public class AccommodationController {
     @PostMapping(value = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResponseDTO> getAccommodationBasicsByFilter(@RequestParam("location") String location, @RequestParam("begin")
     @DateTimeFormat(pattern = "dd.MM.yyyy") Date begin, @RequestParam("end") @DateTimeFormat(pattern = "dd.MM.yyyy") Date end, @RequestParam("persons")
-    int persons, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sort") String sort, @RequestBody FilterDTO filter) {
+                                                                            int persons, @RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("sort") String sort, @RequestBody FilterDTO filter) {
         //return all basic info of accommodations for search
         LocalDate beginL = begin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         LocalDate endL = end.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         Collection<Accommodation> accommodations = accommodationService.filterAccommodations(persons, location, beginL, endL, filter);
         List<AccommodationBasicDTO> accommodationBasicDTO = accommodations.stream()
-                    .map(AccommodationBasicDTOMapper::fromAccommodationToBasicDTO)
-                    .collect(Collectors.toList());
+                .map(AccommodationBasicDTOMapper::fromAccommodationToBasicDTO)
+                .collect(Collectors.toList());
 
         SearchResponseDTO searchResponseDTO = accommodationService.getSearchReposnseForFilter(accommodationBasicDTO, beginL, endL, persons, location, page, size, sort, filter);
         return new ResponseEntity<>(searchResponseDTO, HttpStatus.OK);
@@ -269,17 +272,18 @@ public class AccommodationController {
     @GetMapping(value = "/images/{accommodationId}")
     public ResponseEntity<Collection<byte[]>> getAccommodationImages(@PathVariable Long accommodationId) throws IOException {
         Collection<byte[]> data = new ArrayList<>();
-        for(FileSystemResource f : accommodationService.getAllImages(accommodationId)) data.add(f.getContentAsByteArray());
-        return new ResponseEntity<>(data,  HttpStatus.OK);
+        for (FileSystemResource f : accommodationService.getAllImages(accommodationId))
+            data.add(f.getContentAsByteArray());
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     @GetMapping(value = "/images/files/{accommodationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Collection<ImageMobileDTO>> getAccommodationImagesFiles(@PathVariable Long accommodationId) throws IOException {
         Collection<ImageMobileDTO> data = new ArrayList<>();
-        for(FileSystemResourcesDTO f : accommodationService.getAllImagesDTO(accommodationId)) {
+        for (FileSystemResourcesDTO f : accommodationService.getAllImagesDTO(accommodationId)) {
             data.add(new ImageMobileDTO(f.getFile().getContentAsByteArray(), f.getId()));
         }
-        return new ResponseEntity<>(data,  HttpStatus.OK);
+        return new ResponseEntity<>(data, HttpStatus.OK);
     }
 
     @PostMapping("/images/{accommodationId}")
@@ -301,8 +305,12 @@ public class AccommodationController {
     public ResponseEntity<Long> addPriceListItem(@PathVariable Long accommodationId, @RequestBody PriceListItemDTO dto) {
         PricelistItem item = PriceListItemDTOMapper.fromDTOtoPriceListItem(dto);
         Availability availability = PriceListItemDTOMapper.fromDTOtoAvailability(dto);
-        accommodationService.addPriceList(accommodationId, item);
-        accommodationService.addAvailability(accommodationId, availability);
+        try {
+            accommodationService.addPriceList(accommodationId, item);
+            accommodationService.addAvailability(accommodationId, availability);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(accommodationId, HttpStatus.OK);
     }
 
@@ -318,7 +326,11 @@ public class AccommodationController {
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceListItemDTO> deletePriceList(@PathVariable Long accommodationId, @RequestBody PriceListItemDTO dto) {
         PricelistItem pricelistItem = PriceListItemDTOMapper.fromDTOtoPriceListItem(dto);
-        accommodationService.deletePriceListItem(accommodationId, pricelistItem);
+        try {
+            accommodationService.deletePriceListItem(accommodationId, pricelistItem);
+        } catch (BadRequestException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<PriceListItemDTO>(dto, HttpStatus.OK);
     }
 
