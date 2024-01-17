@@ -11,7 +11,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LandingPage {
     private WebDriver driver;
-    private static String URL = "http://localhost:4200/";
 
     @FindBy(xpath = "//div[@class = 'inline'][position()=1]/input")
     WebElement searchDestination;
@@ -36,7 +35,6 @@ public class LandingPage {
 
     public LandingPage(WebDriver driver){
         this.driver = driver;
-        driver.get(URL);
         PageFactory.initElements(driver, this);
     }
 

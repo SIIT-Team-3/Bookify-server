@@ -2,8 +2,11 @@ package com.example.demo.e2e.pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage {
     private WebDriver driver;
@@ -15,7 +18,7 @@ public class LoginPage {
     @FindBy(xpath = "//input[@id = 'mat-input-1']")
     WebElement password;
 
-    @FindBy(xpath = "//span[@class = 'mdc-button__label'][text()='LOG IN']")
+    @FindBy(xpath = "//button[@type='submit']")
     WebElement loginButton;
 
     public LoginPage(WebDriver driver){

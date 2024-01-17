@@ -16,8 +16,8 @@ public class SearchAndFilterTest extends TestBase {
     String persons = "2";
     String[] setPrice = {"60", "130"};
     String[] getPrice;
-    String[] types = new String[]{"Room"};
-    String[] amenities = new String[]{"Garden", "Bar"};
+    String[] types = new String[]{"Room", "Hotel"};
+    String[] amenities = new String[]{"Garden", "Bar", "Diner"};
 
     private static boolean setupDone = false;
 

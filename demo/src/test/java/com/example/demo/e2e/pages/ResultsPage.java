@@ -46,7 +46,7 @@ public class ResultsPage {
     @FindBy(xpath = "//input[@type='range'][position()=2]")
     WebElement sliderMax;
 
-    @FindBy(css = ".mat-mdc-paginator-navigation-next")
+    @FindBy(xpath = "//button[contains(@class, 'mat-mdc-tooltip-trigger mat-mdc-paginator-navigation-next mdc-icon-button mat-mdc-icon-button mat-unthemed mat-mdc-button-base')]")
     WebElement nextPage;
 
     public ResultsPage(WebDriver driver){
