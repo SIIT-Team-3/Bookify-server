@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class GuestReservationsPage {
-    private WebDriver driver;
+    private final WebDriver driver;
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.");
     @FindBy(xpath = "//h1[text()='My Reservations']")
     WebElement title;

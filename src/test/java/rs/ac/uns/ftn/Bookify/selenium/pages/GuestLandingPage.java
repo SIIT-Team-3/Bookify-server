@@ -16,7 +16,7 @@ public class GuestLandingPage {
     @FindBy(id = "moto")
     WebElement moto;
 
-    @FindBy(xpath = "//span[text()=\"Reservations\"]")
+    @FindBy(xpath = "//span[text()='Reservations']")
     WebElement accommodationsLink;
 
     public GuestLandingPage(WebDriver driver) {

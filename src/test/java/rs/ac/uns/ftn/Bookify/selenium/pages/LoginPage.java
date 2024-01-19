@@ -11,7 +11,6 @@ import java.time.Duration;
 
 public class LoginPage {
     private WebDriver driver;
-    private static String PAGE_URL = "http://localhost:4200/login";
 
     @FindBy(className = "logo")
     WebElement logo;
@@ -27,7 +26,6 @@ public class LoginPage {
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
-        driver.get(PAGE_URL);
         PageFactory.initElements(driver, this);
     }
 
