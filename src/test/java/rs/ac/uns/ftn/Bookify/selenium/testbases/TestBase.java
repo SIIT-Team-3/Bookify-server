@@ -1,17 +1,17 @@
 package rs.ac.uns.ftn.Bookify.selenium.testbases;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 
 import java.util.concurrent.TimeUnit;
 
 public class TestBase {
     public static WebDriver driver;
 
-    @BeforeSuite
-    public void initializeWebDriver() {
+    @BeforeAll
+    public static void initializeWebDriver() {
         System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
         driver = new ChromeDriver();
 
@@ -20,8 +20,8 @@ public class TestBase {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
 
-    @AfterSuite
-    public void quitDriver() {
+    @AfterAll
+    public static void quitDriver() {
         driver.quit();
     }
 }
