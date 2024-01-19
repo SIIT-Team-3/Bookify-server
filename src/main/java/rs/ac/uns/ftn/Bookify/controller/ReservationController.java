@@ -155,7 +155,8 @@ public class ReservationController {
         reservationService.setGuest(guest, ra);
         accommodationService.acceptReservationIfAutomaticConformation(ra);
         notificationService.createNotificationOwnerNewReservation(ra);
-        return new ResponseEntity<>(new ReservationDTO(), HttpStatus.CREATED);
+        ReservationDTO reservationDTO = ReservationDTOMapper.toReservationDTO(ra);
+        return new ResponseEntity<>(reservationDTO, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/delete/{reservationId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -216,7 +217,7 @@ public class ReservationController {
         return new ResponseEntity<Collection<ReservationDTO>>(reservations, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/guest/{guestId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/guest/{guestId}")
     @PreAuthorize("hasAuthority('ROLE_GUEST')")
     public ResponseEntity<Collection<ReservationGuestViewDTO>> getReservationsByGuestId(@PathVariable Long guestId){
         List<ReservationGuestViewDTO> response = new ArrayList<>();
