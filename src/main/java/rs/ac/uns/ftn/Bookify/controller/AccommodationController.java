@@ -305,12 +305,8 @@ public class AccommodationController {
     public ResponseEntity<Long> addPriceListItem(@PathVariable Long accommodationId, @RequestBody PriceListItemDTO dto) {
         PricelistItem item = PriceListItemDTOMapper.fromDTOtoPriceListItem(dto);
         Availability availability = PriceListItemDTOMapper.fromDTOtoAvailability(dto);
-        try {
-            accommodationService.addPriceList(accommodationId, item);
-            accommodationService.addAvailability(accommodationId, availability);
-        } catch (BadRequestException e) {
-            return new ResponseEntity<>(-1L, HttpStatus.BAD_REQUEST);
-        }
+        accommodationService.addPriceList(accommodationId, item);
+        accommodationService.addAvailability(accommodationId, availability);
         return new ResponseEntity<>(accommodationId, HttpStatus.OK);
     }
 
@@ -326,11 +322,7 @@ public class AccommodationController {
     @PreAuthorize("hasAuthority('ROLE_OWNER')")
     public ResponseEntity<PriceListItemDTO> deletePriceList(@PathVariable Long accommodationId, @RequestBody PriceListItemDTO dto) {
         PricelistItem pricelistItem = PriceListItemDTOMapper.fromDTOtoPriceListItem(dto);
-        try {
-            accommodationService.deletePriceListItem(accommodationId, pricelistItem);
-        } catch (BadRequestException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        accommodationService.deletePriceListItem(accommodationId, pricelistItem);
         return new ResponseEntity<PriceListItemDTO>(dto, HttpStatus.OK);
     }
 

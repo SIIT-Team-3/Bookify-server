@@ -98,13 +98,13 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
 
-        ResponseEntity<Long> responseEntity = restTemplate.exchange("/api/v1/accommodations/1/addPrice",
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/v1/accommodations/1/addPrice",
                 HttpMethod.POST,
                 requestEntity,
-                Long.class);
+                String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals(-1L, responseEntity.getBody());
+        assertEquals("Accommodation has reservations", responseEntity.getBody());
     }
 
     @Test
@@ -140,12 +140,12 @@ public class AccommodationControllerTest extends AbstractTestNGSpringContextTest
 
         HttpEntity<PriceListItemDTO> requestEntity = new HttpEntity<>(dto, headers);
 
-        ResponseEntity<PriceListItemDTO> responseEntity = restTemplate.exchange("/api/v1/accommodations/price/1",
+        ResponseEntity<String> responseEntity = restTemplate.exchange("/api/v1/accommodations/price/1",
                 HttpMethod.DELETE,
                 requestEntity,
-                PriceListItemDTO.class);
+                String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertNull(responseEntity.getBody());
+        assertEquals("Accommodation has reservations", responseEntity.getBody());
     }
 }
