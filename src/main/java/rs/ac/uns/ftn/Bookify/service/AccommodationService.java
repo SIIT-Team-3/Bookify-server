@@ -530,6 +530,7 @@ public class AccommodationService implements IAccommodationService {
     public void acceptReservationIfAutomaticConformation(Reservation reservation) {
         Accommodation accommodation = reservation.getAccommodation();
         if (accommodation.isManual()) return;
+        reservationService.accept(reservation.getId());
         acceptReservationForAccommodation(reservation);
 
     }
@@ -537,8 +538,6 @@ public class AccommodationService implements IAccommodationService {
     @Override
     public void acceptReservationForAccommodation(Reservation reservation) {
         Accommodation accommodation = reservation.getAccommodation();
-        reservation.setStatus(Status.ACCEPTED);
-        reservationService.save(reservation);
         reservationService.rejectOverlappingReservations(accommodation.getId(), reservation.getStart(), reservation.getEnd());
         trimOverlapingAvailabilityIntervals(accommodation.getId(), reservation.getStart(), reservation.getEnd());
         notificationService.createNotificationGuestRequestResponse(reservation);

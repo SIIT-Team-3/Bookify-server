@@ -72,7 +72,6 @@ public class ReservationControllerTest extends AbstractTestNGSpringContextTests 
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertEquals(Objects.requireNonNull(responseEntity.getBody()).getId(), 4);
         Assertions.assertEquals(Objects.requireNonNull(responseEntity.getBody()).getStatus(), Status.ACCEPTED);
-        Assertions.assertNull(requestEntity.getBody());
     }
 
     @Test

@@ -153,6 +153,7 @@ public class ReservationController {
         reservationService.setAccommodation(accommodation, ra);
         Guest guest = (Guest) userService.get(guestId);
         reservationService.setGuest(guest, ra);
+//        this.acceptReservation(ra.getId());
         accommodationService.acceptReservationIfAutomaticConformation(ra);
         notificationService.createNotificationOwnerNewReservation(ra);
         ReservationDTO reservationDTO = ReservationDTOMapper.toReservationDTO(ra);
