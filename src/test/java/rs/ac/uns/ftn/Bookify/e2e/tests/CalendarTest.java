@@ -102,7 +102,7 @@ public class CalendarTest  extends TestBase{
         assertTrue(calendarPage.isLoaded());
 
         String start, end;
-        double price = 3.0;
+        double price = 7.0;
 
 
         start = selectDate(calendarPage, 10, "December", 2027);

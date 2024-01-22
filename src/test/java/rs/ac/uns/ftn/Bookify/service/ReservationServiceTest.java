@@ -38,7 +38,7 @@ public class ReservationServiceTest extends AbstractTestNGSpringContextTests {
         LocalDate end = LocalDate.of(2024, 2, 6);
         Set<Status> statuses = EnumSet.of(Status.CANCELED, Status.REJECTED);
 
-        when(reservationRepository.findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(1L, start, end, statuses)).thenReturn(new ArrayList<>());
+        when(reservationRepository.findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(1L, end, start, statuses)).thenReturn(new ArrayList<>());
 
         boolean result = reservationService.hasReservationInRange(1L, start, end);
 
