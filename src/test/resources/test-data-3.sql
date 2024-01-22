@@ -11,12 +11,6 @@ INSERT INTO accommodations (name, description, min_guest, max_guest, cancellatio
                                                                                                                                                                                              ('Hotel na zlatiboru', 'Escape to nature in our Riverside Cabin. Tucked away by the river, this cozy cabin provides a peaceful retreat with the soothing sounds of nature.', 2, 4, 3, 'APPROVED', true, 'HOTEL', 'PERSON', 'Øster Voldgade 5', 'Copenhagen', 'Denmark', '1350', false),
                                                                                                                                                                                              ('Test reservation repo', 'Escape to nature in our Riverside Cabin. Tucked away by the river, this cozy cabin provides a peaceful retreat with the soothing sounds of nature.', 2, 4, 3, 'APPROVED', false, 'HOTEL', 'PERSON', 'Øster Voldgade 5', 'Copenhagen', 'Denmark', '1350', false);
 
-INSERT INTO availability (start_date, end_date)
-VALUES ('2023-04-01', '2023-04-30'),
-       ('2024-10-01', '2024-10-30'),
-       ('2024-10-01', '2024-10-30');
-
-INSERT INTO accommodations_availability (accommodation_id, availability_id) VALUES (1, 1), (2, 2), (3, 3);
 
 INSERT INTO users_accommodations (owner_id, accommodations_id)
 VALUES (3, 1),
@@ -87,3 +81,20 @@ VALUES
     ('2025-10-01', '2025-10-10', 3, '2025-10-20', 'PENDING', 1, 2, 120),
     ('2025-10-01', '2025-10-01', 2, '2025-10-30', 'ACCEPTED', 1, 2, 100);
 
+
+INSERT INTO availability (start_date, end_date)
+VALUES
+    ('2024-03-01', '2024-03-20'), ('2024-03-25', '2024-03-30'), ('2024-03-01', '2024-03-10'), ('2024-03-12', '2024-03-20'),
+    ('2024-03-05', '2024-03-07'), ('2024-03-10', '2024-03-13');
+
+INSERT INTO accommodations_availability (accommodation_id, availability_id)
+VALUES
+    (1, 1), (1, 2), (2, 3), (2, 4), (3, 5), (3, 6);
+
+INSERT INTO availability (start_date, end_date)
+VALUES
+    ('2027-12-04', '2027-12-10');
+
+INSERT INTO accommodations_availability (accommodation_id, availability_id)
+VALUES
+    (1, 7);

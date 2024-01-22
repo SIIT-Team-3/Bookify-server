@@ -6,8 +6,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.Bookify.model.Availability;
 import rs.ac.uns.ftn.Bookify.repository.interfaces.IAccommodationRepository;
 
@@ -16,7 +18,9 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @DataJpaTest
-@ActiveProfiles("iss")
+@ActiveProfiles("testrepo")
+@Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AccommodationRepositoryTest {
     /**
      * Should test:
@@ -30,7 +34,6 @@ public class AccommodationRepositoryTest {
     public void getAvailabilityItemsOverlapsWith(Long accommodationId, LocalDate startDate, LocalDate endDate, int expected) {
         List<Availability> items = (List<Availability>) accommodationRepository.getAvailabilityItemsOverlapsWith(accommodationId, startDate, endDate);
 
-        Assertions.assertEquals(expected, items.size());
         Assertions.assertEquals(expected, items.size());
         for (Availability item : items) {
             Assertions.assertFalse(item.getStartDate().isAfter(endDate));
