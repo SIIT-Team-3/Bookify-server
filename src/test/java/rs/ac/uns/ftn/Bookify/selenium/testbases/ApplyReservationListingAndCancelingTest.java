@@ -47,6 +47,7 @@ public class ApplyReservationListingAndCancelingTest extends TestBase {
         // opening guest reservations page
         GuestReservationsPage guestReservationsPage = new GuestReservationsPage(driver);
         Assertions.assertTrue(guestReservationsPage.isLoaded());
+        Assertions.assertTrue(guestReservationsPage.checkDisplayedData());
 
         Assertions.assertTrue(guestReservationsPage.cancelReservation(false));
     }
@@ -72,6 +73,7 @@ public class ApplyReservationListingAndCancelingTest extends TestBase {
         // opening guest reservations page
         GuestReservationsPage guestReservationsPage = new GuestReservationsPage(driver);
         Assertions.assertTrue(guestReservationsPage.isLoaded());
+        Assertions.assertTrue(guestReservationsPage.checkDisplayedData());
 
         // cancel reservation should not be allowed
         Assertions.assertTrue(guestReservationsPage.cancelReservation(true));

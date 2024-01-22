@@ -88,4 +88,13 @@ public class GuestReservationsPage {
         return null;
     }
 
+    public boolean checkDisplayedData(){
+        for (WebElement res : allReservations) {
+            WebElement reservationTemp = res.findElement(By.xpath(".//p[contains(text(), 'Status')]"));
+            String status = reservationTemp.getText().split(":")[1].trim();
+            if(!status.equals("ACCEPTED")) return false;
+
+        }
+        return true;
+    }
 }
