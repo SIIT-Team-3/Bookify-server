@@ -131,7 +131,7 @@ public class ReservationControllerTest extends AbstractTestNGSpringContextTests 
 
     @ParameterizedTest
     @Order(5)
-    @DisplayName("Shouldn't accept reservation because of reservation status")
+    @DisplayName("Shouldn't accept reservation because of cancellation expired")
     @CsvSource(value = {"1"})
     public void test_acceptReservation_fail_reservation_response_date_expired(int param){
         HttpHeaders headers = new HttpHeaders();

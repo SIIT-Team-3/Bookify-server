@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.Bookify.repository;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,6 +32,7 @@ public class AccommodationRepositoryTest {
 
     @ParameterizedTest
     @MethodSource(value = "dataGetAvailabilitiesToCheck")
+    @DisplayName("get all availabilities that are overlapping")
     public void getAvailabilityItemsOverlapsWith(Long accommodationId, LocalDate startDate, LocalDate endDate, int expected) {
         List<Availability> items = (List<Availability>) accommodationRepository.getAvailabilityItemsOverlapsWith(accommodationId, startDate, endDate);
 

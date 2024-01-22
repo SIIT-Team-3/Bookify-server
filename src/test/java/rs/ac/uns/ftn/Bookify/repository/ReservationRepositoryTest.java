@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.Bookify.repository;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,6 +37,7 @@ public class ReservationRepositoryTest {
 
     @ParameterizedTest
     @MethodSource(value = "source")
+    @DisplayName("Find all overlapping availabilities that are in status PENDING")
     public void test_findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(Long accommodationId, LocalDate start, LocalDate end, int expectedSize) {
         Optional<Reservation> reservation = reservationRepository.findById(1L);
         List<Reservation> reservations = reservationRepository.findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(
