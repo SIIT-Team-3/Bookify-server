@@ -147,20 +147,6 @@ public class AccommodationServiceTest {
                 // start and ending overlapping
                 Arguments.arguments(LocalDate.of(2024, 4, 15), LocalDate.of(2024, 4, 20),
                         new ArrayList<>(Arrays.asList(new Availability(1L, LocalDate.of(2024, 4, 15), LocalDate.of(2024, 4, 20)))),
-                        new ArrayList<>())
-
-                // overlapping with two availabilties - not possible because of merge
-//                Arguments.arguments(LocalDate.of(2024, 6, 10), LocalDate.of(2024, 6, 20),
-//                        new ArrayList<>(Arrays.asList(
-//                                new Availability(1L, LocalDate.of(2024, 5, 20), LocalDate.of(2024, 6, 15)),
-//                                new Availability(2L, LocalDate.of(2024, 6, 16), LocalDate.of(2024, 6, 30))
-//                        )),
-//                        new ArrayList<>(Arrays.asList(
-//                                new Availability(1L, LocalDate.of(2024, 5, 20), LocalDate.of(2024, 6, 9)),
-//                                new Availability(2L, LocalDate.of(2024, 5, 20), LocalDate.of(2024, 5, 31)),
-//                                new Availability(3L, LocalDate.of(2024, 5, 20), LocalDate.of(2024, 5, 31)),
-//                                new Availability(4L, LocalDate.of(2024, 6, 11), LocalDate.of(2024, 6, 15))
-//                        )))
-                );
+                        new ArrayList<>()));
     }
 }

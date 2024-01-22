@@ -24,28 +24,43 @@ import java.util.stream.Stream;
 @DataJpaTest
 @ActiveProfiles("testrepo")
 @Transactional
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ReservationRepositoryTest {
-
+    /**
+     * Should test:
+     * findReservationByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn
+     */
     @Autowired
     private IReservationRepository reservationRepository;
 
     @ParameterizedTest
     @MethodSource(value = "source")
-    public void test_findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(Long accommodationId, LocalDate start, LocalDate end, Set<Status> statuses, int expectedNumber) {
+    public void test_findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(Long accommodationId, LocalDate start, LocalDate end, int expectedSize) {
         Optional<Reservation> reservation = reservationRepository.findById(1L);
-        List<Reservation> reservations = reservationRepository.findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(accommodationId,end,start,statuses);
-        Assertions.assertEquals(reservations.size(), expectedNumber);
+        List<Reservation> reservations = reservationRepository.findReservationsByAccommodation_IdAndStartBeforeAndEndAfterAndStatusNotIn(
+                accommodationId,
+                end,
+                start,
+                EnumSet.of(Status.CANCELED, Status.ACCEPTED, Status.REJECTED));
+        Assertions.assertEquals(expectedSize, reservations.size());
         reservations.forEach(r -> {
-            Assertions.assertFalse(statuses.contains(r.getStatus()));
-            Assertions.assertTrue(start.isBefore(r.getStart()));
-            Assertions.assertTrue(r.getEnd().isAfter(end));
+            Assertions.assertEquals(Status.PENDING, r.getStatus());
         });
     }
 
 
-    static Stream<Arguments> source(){
-        return Stream.of(Arguments.arguments(1L, LocalDate.of(2024,6,1), LocalDate.of(2024, 6, 10), EnumSet.of(Status.ACCEPTED),6));
+    static Stream<Arguments> source() {
+        return Stream.of(
+                Arguments.arguments(1L, LocalDate.of(2024, 3, 15), LocalDate.of(2024, 3, 25), 0),
+                Arguments.arguments(1L, LocalDate.of(2025, 4, 15), LocalDate.of(2025, 4, 20), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 5, 1), LocalDate.of(2025, 5, 15), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 6, 15), LocalDate.of(2025, 6, 30), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 20), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 8, 15), LocalDate.of(2025, 8, 20), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 9, 10), LocalDate.of(2025, 9, 20), 1),
+                Arguments.arguments(1L, LocalDate.of(2025, 10, 1), LocalDate.of(2025, 10, 30), 1)
+        );
     }
+
 
 }
